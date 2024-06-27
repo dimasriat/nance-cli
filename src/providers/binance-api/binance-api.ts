@@ -1,3 +1,4 @@
+import type { NanceConfig } from '../../config';
 import type {
   IBinanceApiProvider,
   CheckServerTimeResponse,
@@ -5,6 +6,8 @@ import type {
 } from './types';
 
 export class BinanceApiProvider implements IBinanceApiProvider {
+  constructor(private config: NanceConfig) {}
+
   public async checkServerTime(): Promise<CheckServerTimeResponse> {
     const response =
       await this._getBinance<CheckServerTimeResponse>('/fapi/v1/time');
