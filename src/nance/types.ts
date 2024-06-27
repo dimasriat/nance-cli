@@ -1,3 +1,4 @@
+import type { IBinanceApiProvider } from '../providers/binance-api';
 export type AccountPosition = {
   symbol: string;
   entryPrice: string;
@@ -19,4 +20,5 @@ export type AccountState = {
 export interface INance {
   checkServerTime(): Promise<number>;
   getAccountState(): Promise<AccountState>;
+  getApi(): IBinanceApiProvider;
 }

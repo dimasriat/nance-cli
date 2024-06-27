@@ -1,47 +1,26 @@
-import type {
-  IBinanceApiProvider,
-  AccountInformationResponse,
-} from '../providers/binance-api';
-import type { INance, AccountState } from './types';
+import type { IBinanceApiProvider } from '../providers/binance-api';
+import { NanceGuest } from './nance.guest';
+import { NanceRead } from './nance.read';
+import type { AccountState, INance } from './types';
 
 export class Nance implements INance {
-  constructor(private api: IBinanceApiProvider) {}
+  private nanceGuest: NanceGuest;
+  private nanceRead: NanceRead;
+
+  constructor(private api: IBinanceApiProvider) {
+    this.nanceGuest = new NanceGuest(this);
+    this.nanceRead = new NanceRead(this);
+  }
+
+  public getApi(): IBinanceApiProvider {
+    return this.api;
+  }
 
   public async checkServerTime(): Promise<number> {
-    try {
-      const checkServerTime = await this.api.checkServerTime();
-      return checkServerTime.serverTime;
-    } catch (error) {
-      throw new Error('ERROR: CHECK_SERVER_TIME');
-    }
+    return this.nanceGuest.checkServerTime();
   }
 
   public async getAccountState(): Promise<AccountState> {
-    try {
-      const accountInformation = await this.api.getAccountInformation();
-      return this._parseAccountState(accountInformation);
-    } catch (error) {
-      throw new Error('ERROR: GET_ACCOUNT_STATE');
-    }
-  }
-
-  private _parseAccountState(
-    accountInformation: AccountInformationResponse,
-  ): AccountState {
-    return {
-      marginAsset: 'USDT',
-      marginBalance: accountInformation.totalMarginBalance,
-      availableBalance: accountInformation.availableBalance,
-      unrealizedProfit: accountInformation.totalCrossUnPnl,
-      positions: accountInformation.positions.map((position) => ({
-        symbol: position.symbol,
-        entryPrice: position.entryPrice,
-        markPrice: position.entryPrice,
-        unrealizedProfit: position.unrealizedProfit,
-        positionAmt: position.positionAmt,
-        positionSide: position.positionSide,
-        leverage: position.leverage,
-      })),
-    };
+    return this.nanceRead.getAccountState();
   }
 }
