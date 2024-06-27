@@ -65,22 +65,3 @@ export type Position = {
   positionAmt: string;
   updateTime: number;
 };
-
-export class BinanceApiProvider implements IBinanceApiProvider {
-  public async checkServerTime(): Promise<CheckServerTimeResponse> {
-    const response =
-      await this._getBinance<CheckServerTimeResponse>('/fapi/v1/time');
-    return response;
-  }
-
-  public async getAccountInformation(): Promise<AccountInformationResponse> {
-    const response =
-      await this._getBinance<AccountInformationResponse>('/fapi/v2/account');
-    return response;
-  }
-
-  private async _getBinance<T>(path: string): Promise<T> {
-    const response = await fetch(path);
-    return (await response.json()) as T;
-  }
-}
