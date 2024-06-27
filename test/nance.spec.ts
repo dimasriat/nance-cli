@@ -55,9 +55,17 @@ describe('Nance', () => {
       });
       it.skip("should throw an error if the connection isn't OK", async () => {});
     });
+
+    describe("calculateEntry()", () => {});
   });
 
   describe('WRITE METHOD', () => {
     describe('openLong()', () => {});
+    describe('openShort()', () => {});
+    describe('closePosition()', () => {});
+    describe('placeTP()', () => {});
+    describe('removeTP()', () => {});
+    describe('placeSL()', () => {});
+    describe('removeSL()', () => {});
   });
 });
