@@ -56,7 +56,7 @@ describe('Nance', () => {
       it.skip("should throw an error if the connection isn't OK", async () => {});
     });
 
-    describe("calculateEntry()", () => {});
+    describe('calculateEntry()', () => {});
   });
 
   describe('WRITE METHOD', () => {

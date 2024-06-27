@@ -1,4 +1,7 @@
-import { IBinanceApiProvider } from './binance-api-provider';
+import {
+  IBinanceApiProvider,
+  AccountInformationResponse,
+} from './providers/binance-api';
 
 export type AccountPosition = {
   symbol: string;
@@ -23,7 +26,7 @@ export interface INance {
   getAccountState(): Promise<AccountState>;
 }
 
-export class Nance {
+export class Nance implements INance {
   constructor(private api: IBinanceApiProvider) {}
 
   public async checkServerTime(): Promise<number> {
@@ -36,8 +39,18 @@ export class Nance {
   }
 
   public async getAccountState(): Promise<AccountState> {
-    const accountInformation = await this.api.getAccountInformation();
-    const accountState: AccountState = {
+    try {
+      const accountInformation = await this.api.getAccountInformation();
+      return this._parseAccountState(accountInformation);
+    } catch (error) {
+      throw new Error('ERROR: GET_ACCOUNT_STATE');
+    }
+  }
+
+  private _parseAccountState(
+    accountInformation: AccountInformationResponse,
+  ): AccountState {
+    return {
       marginAsset: 'USDT',
       marginBalance: accountInformation.totalMarginBalance,
       availableBalance: accountInformation.availableBalance,
@@ -52,6 +65,5 @@ export class Nance {
         leverage: position.leverage,
       })),
     };
-    return accountState;
   }
 }
