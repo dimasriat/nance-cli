@@ -1,5 +1,5 @@
 import { it, expect, describe } from 'bun:test';
-import { Nance } from '../src/nance';
+import { AccountState, Nance } from '../src/nance';
 import { MockBinanceApiProvider } from './mock/binance-api-provider';
 
 describe('Nance', () => {
@@ -30,12 +30,29 @@ describe('Nance', () => {
         const actual = sut.checkServerTime();
 
         // assert
-        expect(actual).rejects.toThrow('API error');
+        expect(actual).rejects.toThrow('ERROR: CHECK_SERVER_TIME');
       });
     });
 
-    describe('showAllPositions()', () => {
-      it.skip('should show all positions', async () => {});
+    describe('getAccountState()', () => {
+      it.skip('should return account state', async () => {
+        // arange
+        const api = new MockBinanceApiProvider();
+        const sut = new Nance(api);
+        const expected: AccountState = {
+          marginAsset: 'USDT',
+          marginBalance: '1000',
+          availableBalance: '1000',
+          unrealizedProfit: '0',
+          positions: [],
+        };
+
+        // act
+        const actual = sut.getAccountState();
+
+        // assert
+        expect(actual).resolves.toBe(expected);
+      });
       it.skip("should throw an error if the connection isn't OK", async () => {});
     });
   });
