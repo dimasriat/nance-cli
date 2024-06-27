@@ -3,6 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
+    "dev": "bun src/index.ts",
     "format": "prettier --write \"{src,test,example}/**/*.ts\""
   },
   "devDependencies": {

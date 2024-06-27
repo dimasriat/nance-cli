@@ -1,5 +1,5 @@
 import { it, expect, describe } from 'bun:test';
-import { AccountState, Nance } from '../src/nance';
+import { Nance, AccountState } from '../src/nance';
 import { MockBinanceApiProvider } from './mock/binance-api-provider';
 
 describe('Nance', () => {
@@ -61,7 +61,7 @@ describe('Nance', () => {
         const actual = sut.getAccountState();
 
         // assert
-        expect(actual).resolves.toBe(expected);
+        expect(actual).resolves.toEqual(expected);
       });
 
       it("should throw an error if the connection isn't OK", async () => {

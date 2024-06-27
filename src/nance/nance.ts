@@ -2,7 +2,7 @@ import {
   IBinanceApiProvider,
   AccountInformationResponse,
 } from '../providers/binance-api';
-import { INance, AccountState } from './types';
+import { INance, AccountState } from '.';
 
 export class Nance implements INance {
   constructor(private api: IBinanceApiProvider) {}

@@ -1,4 +1,5 @@
 import { Nance } from './nance';
-import { AccountPosition, AccountState, INance } from './types';
+import type { AccountPosition, AccountState, INance } from './types';
 
-export { Nance, AccountPosition, AccountState, INance };
+export { Nance };
+export type { AccountPosition, AccountState, INance };

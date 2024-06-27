@@ -1,5 +1,5 @@
 import { BinanceApiProvider } from './binance-api';
-import {
+import type {
   IBinanceApiProvider,
   CheckServerTimeResponse,
   AccountInformationResponse,
@@ -8,10 +8,13 @@ import {
 } from './types';
 
 export {
+  BinanceApiProvider,
+};
+
+export type {
   IBinanceApiProvider,
   CheckServerTimeResponse,
   AccountInformationResponse,
   Asset,
   Position,
-  BinanceApiProvider,
 };
