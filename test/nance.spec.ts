@@ -35,7 +35,7 @@ describe('Nance', () => {
     });
 
     describe('getAccountState()', () => {
-      it.skip('should return account state', async () => {
+      it('should return account state', async () => {
         // arange
         const api = new MockBinanceApiProvider();
         const sut = new Nance(api);
@@ -44,7 +44,17 @@ describe('Nance', () => {
           marginBalance: '1000',
           availableBalance: '1000',
           unrealizedProfit: '0',
-          positions: [],
+          positions: [
+            {
+              symbol: 'BTCUSDT',
+              entryPrice: '1000',
+              markPrice: '1000',
+              unrealizedProfit: '0',
+              positionAmt: '1000',
+              positionSide: 'LONG',
+              leverage: '1',
+            },
+          ],
         };
 
         // act
@@ -53,7 +63,20 @@ describe('Nance', () => {
         // assert
         expect(actual).resolves.toBe(expected);
       });
-      it.skip("should throw an error if the connection isn't OK", async () => {});
+
+      it("should throw an error if the connection isn't OK", async () => {
+        // arange
+        const api = new MockBinanceApiProvider();
+        const sut = new Nance(api);
+
+        api.setConnectionOk(false);
+
+        // act
+        const actual = sut.getAccountState();
+
+        // assert
+        expect(actual).rejects.toThrow('ERROR: GET_ACCOUNT_STATE');
+      });
     });
 
     describe('calculateEntry()', () => {});

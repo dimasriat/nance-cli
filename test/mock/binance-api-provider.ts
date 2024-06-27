@@ -2,7 +2,7 @@ import {
   AccountInformationResponse,
   CheckServerTimeResponse,
   IBinanceApiProvider,
-} from '../../src/binance-api-provider';
+} from '../../src/providers/binance-api';
 
 export class MockBinanceApiProvider implements IBinanceApiProvider {
   private _isConnectionOk = true;
@@ -11,10 +11,14 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
     this._isConnectionOk = ok;
   }
 
-  public async checkServerTime(): Promise<CheckServerTimeResponse> {
+  private _connectionErrorTest(): void {
     if (!this._isConnectionOk) {
-      throw new Error('ERROR: CHECK_SERVER_TIME');
+      throw new Error(`ERROR FROM API`);
     }
+  }
+
+  public async checkServerTime(): Promise<CheckServerTimeResponse> {
+    this._connectionErrorTest();
     const mockResult: CheckServerTimeResponse = {
       serverTime: 69420,
     };
@@ -23,6 +27,7 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
   }
 
   public async getAccountInformation(): Promise<AccountInformationResponse> {
+    this._connectionErrorTest();
     const result: AccountInformationResponse = {
       feeTier: 69420,
       feeBurn: true,
