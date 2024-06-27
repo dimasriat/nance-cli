@@ -7,9 +7,7 @@ import type {
   Position,
 } from './types';
 
-export {
-  BinanceApiProvider,
-};
+export { BinanceApiProvider };
 
 export type {
   IBinanceApiProvider,

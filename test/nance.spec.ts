@@ -1,6 +1,7 @@
 import { it, expect, describe } from 'bun:test';
-import { Nance, AccountState } from '../src/nance';
+import { Nance } from '../src/nance';
 import { MockBinanceApiProvider } from './mock/binance-api-provider';
+import type { AccountState } from '../src/nance';
 
 describe('Nance', () => {
   describe('READ METHOD', () => {
