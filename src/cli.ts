@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { INance } from './nance';
+import type { INance } from './nance';
 
 export class NanceCli {
   constructor(private nance: INance) {}
