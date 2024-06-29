@@ -2,10 +2,13 @@ import type {
   AccountInformationResponse,
   CheckServerTimeResponse,
   IBinanceApiProvider,
+  TickerPrice,
 } from '../../src/providers/binance-api';
 
 export class MockBinanceApiProvider implements IBinanceApiProvider {
   private _isConnectionOk = true;
+
+  private tickerPrice: Record<string, TickerPrice> = {};
 
   public setConnectionOk(ok: boolean): void {
     this._isConnectionOk = ok;
@@ -26,9 +29,25 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
     return mockResult;
   }
 
+  public setTickerPrice(symbol: string, price: string): void {
+    this.tickerPrice[symbol.toLowerCase()] = {
+      symbol,
+      price,
+      time: 69420,
+    };
+  }
+
+  public async getCurrentAssetPrice(symbol: string): Promise<TickerPrice> {
+    this._connectionErrorTest();
+    const mockResult = this.tickerPrice[symbol.toLowerCase()];
+
+    return mockResult;
+  }
+
   public async getAccountInformation(): Promise<AccountInformationResponse> {
     this._connectionErrorTest();
-    const result: AccountInformationResponse = {
+
+    const accountInformation: AccountInformationResponse = {
       feeTier: 69420,
       feeBurn: true,
       canTrade: true,
@@ -86,6 +105,7 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
         },
       ],
     };
-    return result;
+
+    return accountInformation;
   }
 }
