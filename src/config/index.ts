@@ -1,3 +1,3 @@
-import { NanceConfig } from "./config";
+import { NanceConfig } from './config';
 
 export { NanceConfig };
