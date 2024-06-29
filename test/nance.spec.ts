@@ -2,7 +2,6 @@ import { it, expect, describe } from 'bun:test';
 import { Nance } from '../src/nance';
 import { MockBinanceApiProvider } from './mock/binance-api-provider';
 import type { AccountState } from '../src/nance';
-import type { AccountInformationResponse } from '../src/providers/binance-api';
 
 describe('Nance', () => {
   describe('GUEST METHOD', () => {

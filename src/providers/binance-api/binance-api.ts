@@ -5,54 +5,64 @@ import type {
   AccountInformationResponse,
   AccountInformationParams,
   TickerPrice,
+  GetBinanceParams,
+  GetPostBinanceResponse,
+  PostSignedBinanceParams,
 } from './types';
 import * as crypto from 'crypto';
 
 export class BinanceApiProvider implements IBinanceApiProvider {
   constructor(private config: NanceConfig) {}
 
-  public async checkServerTime(): Promise<CheckServerTimeResponse> {
-    const response =
-      await this._getBinance<CheckServerTimeResponse>('/fapi/v1/time');
+  public async checkServerTime(): Promise<
+    GetPostBinanceResponse<CheckServerTimeResponse>
+  > {
+    const response = await this.getBinance<CheckServerTimeResponse>({
+      path: '/fapi/v1/time',
+    });
     return response;
   }
 
   public async getAccountInformation(
     params: AccountInformationParams,
-  ): Promise<AccountInformationResponse> {
-    const response = await this._postSignedBinance<
+  ): Promise<GetPostBinanceResponse<AccountInformationResponse>> {
+    const response = await this.postSignedBinance<
       AccountInformationParams,
       AccountInformationResponse
-    >('/fapi/v2/account', params);
+    >({
+      path: '/fapi/v2/account',
+      data: params,
+    });
     return response;
   }
 
-  public async getCurrentAssetPrice(symbol: string): Promise<TickerPrice> {
-    const response = await this._getBinance<TickerPrice>(
-      `/fapi/v1/ticker/price?symbol=${symbol}`,
-    );
+  public async getCurrentAssetPrice(
+    symbol: string,
+  ): Promise<GetPostBinanceResponse<TickerPrice>> {
+    const response = await this.getBinance<TickerPrice>({
+      path: `/fapi/v1/ticker/price?symbol=${symbol}`,
+    });
     return response;
   }
 
-  private async _getBinance<T>(path: `/${string}`): Promise<T> {
-    // TODO: add proper error handling
+  public async getBinance<T>({
+    path,
+  }: GetBinanceParams): Promise<GetPostBinanceResponse<T>> {
     const response: Response = await fetch(this._getBaseUrl() + path);
-    return (await response.json()) as T;
+
+    return this._handleResponse<T>(response);
   }
 
-  private async _postSignedBinance<D extends Object, T>(
-    path: `/${string}`,
-    data: D,
-  ): Promise<T> {
+  public async postSignedBinance<D extends Object, T>({
+    path,
+    data,
+  }: PostSignedBinanceParams<D>): Promise<GetPostBinanceResponse<T>> {
     const dataWithSignature = this._generateDataWithSignature(data);
     const url = this._combineUrlWithQueryParams(
       this._getBaseUrl() + path,
       dataWithSignature,
     );
 
-    console.log(url);
-
-    // sending
     const response: Response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -61,7 +71,30 @@ export class BinanceApiProvider implements IBinanceApiProvider {
       },
     });
 
-    return (await response.json()) as T;
+    return this._handleResponse<T>(response);
+  }
+
+  private async _handleResponse<T>(
+    response: Response,
+  ): GetPostBinanceResponse<T> {
+    if (!response.ok) {
+      const result: GetPostBinanceResponse<T> = {
+        status: 'error',
+        code: response.status,
+        errorMsg: response.statusText,
+      };
+
+      return result;
+    }
+
+    const json = await response.json();
+    const result: GetPostBinanceResponse<T> = {
+      status: 'success',
+      code: response.status,
+      result: json as T,
+    };
+
+    return result;
   }
 
   private _generateDataWithSignature<D extends Object>(

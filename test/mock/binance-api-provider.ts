@@ -3,12 +3,55 @@ import type {
   CheckServerTimeResponse,
   IBinanceApiProvider,
   TickerPrice,
+  GetPostBinanceResponse,
+  GetBinanceParams,
 } from '../../src/providers/binance-api';
 
 export class MockBinanceApiProvider implements IBinanceApiProvider {
   private _isConnectionOk = true;
 
-  private tickerPrice: Record<string, TickerPrice> = {};
+  private _tickerPrice: Record<string, TickerPrice> = {};
+
+  private _getPostBinanceResponse: any = {};
+  private _getPostBinanceCode: number = 200;
+  private _getPostBinanceErrorMsg: string = '';
+
+  public setResultForGetPostBinance<T>(result: T): void {
+    this._getPostBinanceResponse = result;
+  }
+
+  public setCodeForGetPostBinance(code: number): void {
+    this._getPostBinanceCode = code;
+  }
+
+  public setErrorMsgForGetPostBinance(errorMsg: string): void {
+    this._getPostBinanceErrorMsg = errorMsg;
+  }
+
+  public async getBinance<T>(
+    params: GetBinanceParams,
+  ): Promise<GetPostBinanceResponse<T>> {
+    const isSuccessful =
+      this._getPostBinanceCode < 300 && this._getPostBinanceCode >= 200;
+    const response: GetPostBinanceResponse<T> = {
+      status: isSuccessful ? 'success' : 'error',
+      code: this._getPostBinanceCode,
+      result: isSuccessful ? (this._getPostBinanceResponse as T) : undefined,
+      errorMsg: !isSuccessful ? this._getPostBinanceErrorMsg : undefined,
+    };
+    return response;
+  }
+
+  public async postSignedBinance<D extends Object, T>(
+    params: any,
+  ): Promise<GetPostBinanceResponse<T>> {
+    const response: GetPostBinanceResponse<T> = {
+      status: 'success',
+      code: 200,
+      result: this._getPostBinanceResponse as T,
+    };
+    return response;
+  }
 
   public setConnectionOk(ok: boolean): void {
     this._isConnectionOk = ok;
@@ -20,7 +63,9 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
     }
   }
 
-  public async checkServerTime(): Promise<CheckServerTimeResponse> {
+  public async checkServerTime(): Promise<
+    GetPostBinanceResponse<CheckServerTimeResponse>
+  > {
     this._connectionErrorTest();
     const mockResult: CheckServerTimeResponse = {
       serverTime: 69420,
@@ -30,21 +75,25 @@ export class MockBinanceApiProvider implements IBinanceApiProvider {
   }
 
   public setTickerPrice(symbol: string, price: string): void {
-    this.tickerPrice[symbol.toLowerCase()] = {
+    this._tickerPrice[symbol.toLowerCase()] = {
       symbol,
       price,
       time: 69420,
     };
   }
 
-  public async getCurrentAssetPrice(symbol: string): Promise<TickerPrice> {
+  public async getCurrentAssetPrice(
+    symbol: string,
+  ): Promise<GetPostBinanceResponse<TickerPrice>> {
     this._connectionErrorTest();
-    const mockResult = this.tickerPrice[symbol.toLowerCase()];
+    const mockResult = this._tickerPrice[symbol.toLowerCase()];
 
     return mockResult;
   }
 
-  public async getAccountInformation(): Promise<AccountInformationResponse> {
+  public async getAccountInformation(): Promise<
+    GetPostBinanceResponse<AccountInformationResponse>
+  > {
     this._connectionErrorTest();
 
     const accountInformation: AccountInformationResponse = {

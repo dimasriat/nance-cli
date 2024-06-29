@@ -1,10 +1,35 @@
 export interface IBinanceApiProvider {
-  checkServerTime(): Promise<CheckServerTimeResponse>;
+  checkServerTime(): Promise<GetPostBinanceResponse<CheckServerTimeResponse>>;
+
   getAccountInformation(
     params: AccountInformationParams,
-  ): Promise<AccountInformationResponse>;
-  getCurrentAssetPrice(symbol: string): Promise<TickerPrice>;
+  ): Promise<GetPostBinanceResponse<AccountInformationResponse>>;
+
+  getCurrentAssetPrice(
+    symbol: string,
+  ): Promise<GetPostBinanceResponse<TickerPrice>>;
+
+  getBinance<T>(params: GetBinanceParams): Promise<GetPostBinanceResponse<T>>;
+
+  postSignedBinance<D extends Object, T>(
+    params: PostSignedBinanceParams<D>,
+  ): Promise<GetPostBinanceResponse<T>>;
 }
+
+export type GetBinanceParams = {
+  path: `/${string}`;
+};
+
+export type GetPostBinanceResponse<T = void> = {
+  status: 'success' | 'error';
+  code: number;
+  result?: T;
+  errorMsg?: string;
+};
+
+export type PostSignedBinanceParams<D extends Object> = GetBinanceParams & {
+  data: D;
+};
 
 export type AccountInformationParams = {
   timestamp: string;
