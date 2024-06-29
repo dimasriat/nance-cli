@@ -21,4 +21,5 @@ export interface INance {
   checkServerTime(): Promise<number>;
   getAccountState(): Promise<AccountState>;
   getApi(): IBinanceApiProvider;
+  getCurrentAssetPrice(symbol: string): Promise<string>;
 }

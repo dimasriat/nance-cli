@@ -8,10 +8,23 @@ export class NanceRead {
     try {
       const accountInformation = await this.nance
         .getApi()
-        .getAccountInformation();
+        .getAccountInformation({
+          timestamp: Date.now().toString(),
+        });
       return this._parseAccountState(accountInformation);
     } catch (error) {
       throw new Error('ERROR: GET_ACCOUNT_STATE');
+    }
+  }
+
+  public async getCurrentAssetPrice(symbol: string): Promise<string> {
+    try {
+      const currentAssetPrice = await this.nance
+        .getApi()
+        .getCurrentAssetPrice(symbol);
+      return currentAssetPrice.price;
+    } catch (error) {
+      throw new Error('ERROR: GET_CURRENT_ASSET_PRICE');
     }
   }
 
