@@ -5,6 +5,7 @@ import type {
   AccountInformationResponse,
   Asset,
   Position,
+  TickerPrice,
 } from './types';
 
 export { BinanceApiProvider };
@@ -15,4 +16,5 @@ export type {
   AccountInformationResponse,
   Asset,
   Position,
+  TickerPrice,
 };

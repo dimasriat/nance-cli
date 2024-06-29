@@ -1,7 +1,15 @@
 export interface IBinanceApiProvider {
   checkServerTime(): Promise<CheckServerTimeResponse>;
-  getAccountInformation(): Promise<AccountInformationResponse>;
+  getAccountInformation(
+    params: AccountInformationParams,
+  ): Promise<AccountInformationResponse>;
+  getCurrentAssetPrice(symbol: string): Promise<TickerPrice>;
 }
+
+export type AccountInformationParams = {
+  timestamp: string;
+  recvWindow?: string;
+};
 
 export type CheckServerTimeResponse = {
   serverTime: number;
@@ -64,4 +72,10 @@ export type Position = {
   positionSide: string;
   positionAmt: string;
   updateTime: number;
+};
+
+export type TickerPrice = {
+  symbol: string;
+  price: string;
+  time: number;
 };
